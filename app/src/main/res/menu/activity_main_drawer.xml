@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/name"
+            android:title="name"></item>
+
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home"
+            android:title="Home" />
+        <item
+            android:id="@+id/nav_myBooks"
+            android:icon="@drawable/ic_import_contacts"
+            android:title="My Books" />
+        <item
+            android:id="@+id/nav_myFreeBook"
+            android:icon="@drawable/ic_import_contacts"
+            android:title="My Free Book" />
+        <item
+            android:id="@+id/nav_downloadedBooks"
+            android:icon="@drawable/ic_cloud_download"
+            android:title="Downloaded Books" />
+
+        <item
+            android:id="@+id/nav_expiredBooks"
+            android:icon="@drawable/ic_folder"
+            android:title="Expired Books" />
+        <item
+            android:id="@+id/nav_Logout"
+            android:icon="@drawable/ic_account_circle"
+            android:title="Logout" />
+
+
+    </group>
+
+
+</menu>
