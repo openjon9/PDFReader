@@ -1,15 +1,19 @@
 package com.coder.Fragment;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.coder.OnFragmentInteractionListener;
 import com.coder.pdfreader.R;
 
 
@@ -18,9 +22,19 @@ import com.coder.pdfreader.R;
  */
 public class Fragment2 extends Fragment {
 
+    private String TAG = "PDF";
+    private View viewContent;
+    private RecyclerView recyclerview;
 
     public Fragment2() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+
     }
 
     @Override
@@ -33,9 +47,12 @@ public class Fragment2 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        viewContent = inflater.inflate(R.layout.fragment2, null);
+        recyclerview = (RecyclerView) viewContent.findViewById(R.id.recyclerview);
+        getActivity().setTitle("My Books");
 
 
-        return inflater.inflate(R.layout.fragment2, container, false);
+        return viewContent;
     }
 
 
@@ -88,8 +105,19 @@ public class Fragment2 extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // inflater.inflate(R.menu.main, menu);
-        getActivity().setTitle("My Books");
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+
+        if (isHidden()) {
+            return;
+        }
+        getActivity().setTitle("My Books");
+        // Toast.makeText(getActivity(), "123", Toast.LENGTH_SHORT).show();
+
+    }
 }

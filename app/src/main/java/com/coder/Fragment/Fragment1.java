@@ -7,9 +7,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.coder.Data.data_f1;
+import com.coder.OnFragmentInteractionListener;
 import com.coder.RecyclerViewAdapter.RecyclerView_f1_adapter;
 import com.coder.pdfreader.MainActivity;
 import com.coder.pdfreader.R;
@@ -50,6 +54,7 @@ public class Fragment1 extends Fragment {
     private RecyclerView_f1_adapter adapter;
 
     private String TAG = "PDF";
+    private SearchView searchView;
 
 
     public Fragment1() {
@@ -60,16 +65,21 @@ public class Fragment1 extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 
+
         //  mActivity = (Activity)context;
 
-        bundle = getArguments();
-        mlist = (List<data_f1>) bundle.get("list");
+
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        if (getArguments() != null) {
+            bundle = getArguments();
+            mlist = (List<data_f1>) bundle.get("list");
+        }
 
     }
 
@@ -87,6 +97,7 @@ public class Fragment1 extends Fragment {
 
         //  Toast.makeText(getActivity(), "f1", Toast.LENGTH_SHORT).show();
 
+        getActivity().setTitle("Home");
         return viewContent;
     }
 
@@ -94,11 +105,7 @@ public class Fragment1 extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (isHidden()){
-            Toast.makeText(getActivity(), "rf1", Toast.LENGTH_SHORT).show();
-        }else {
-            Toast.makeText(getActivity(), "rf1111", Toast.LENGTH_SHORT).show();
-        }
+
     }
 
     @Override
@@ -110,8 +117,8 @@ public class Fragment1 extends Fragment {
     public void onResume() {
         super.onResume();
 
-      //  getActivity().setTitle("Home");
-      //  Toast.makeText(getActivity(), "rf1", Toast.LENGTH_SHORT).show();
+        //  getActivity().setTitle("Home");
+        //  Toast.makeText(getActivity(), "rf1", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -140,30 +147,101 @@ public class Fragment1 extends Fragment {
     public void onDetach() {
         super.onDetach();
 
+
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(final Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main, menu);
+        final MenuItem searchItem = menu.findItem(R.id.Search);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        //searchView.setSubmitButtonEnabled(true);//搜尋框右邊小箭頭 跟回車鍵一樣意思 占空間
+
+        // searchView.setIconifiedByDefault(true);
+        //searchView.setIconified(false);
+
+        // searchView.setMaxWidth(1000);
+
+        searchView.setOnQueryTextListener(new queryTextListener());
+
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem menuItem) {
+                setItemsVisibility(menu, searchItem, false);
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+                setItemsVisibility(menu, searchItem, true);
+                return true;
+            }
+        });
 
         super.onCreateOptionsMenu(menu, inflater);
     }
+
+
+//    @Override
+//    public void onPrepareOptionsMenu(Menu menu) {
+//
+//        MenuItem mSearchMenuItem = menu.findItem(R.id.Search);
+//         searchView = (SearchView) mSearchMenuItem.getActionView();
+//
+//
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.shoppingcar:
                 Toast.makeText(getActivity(), "shoppingcar", Toast.LENGTH_SHORT).show();
+
                 return true;
-            case R.id.select:
-                Toast.makeText(getActivity(), "select", Toast.LENGTH_SHORT).show();
+            case R.id.Search:
+
+                // Toast.makeText(getActivity(), searchView.getMaxWidth()+"", Toast.LENGTH_SHORT).show();
+                //  Toast.makeText(getActivity(), "select", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    public interface OnFragmentInteractionListener {
-        public void onFragmentInteraction(String title);
+    private class queryTextListener implements SearchView.OnQueryTextListener {
+
+        @Override
+        public boolean onQueryTextSubmit(String query) { //查詢的時候回應
+            Toast.makeText(getActivity(), "query:" + query, Toast.LENGTH_SHORT).show();
+
+            return false;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String newText) { //剛開啟跟每次文字改變時回應
+
+            //  Toast.makeText(getActivity(), "newText:" + newText, Toast.LENGTH_SHORT).show();
+            return false;
+        }
     }
+
+    private void setItemsVisibility(Menu menu, MenuItem exception, boolean visible) {
+        for (int i = 0; i < menu.size(); ++i) {
+            MenuItem item = menu.getItem(i);
+            if (item != exception) item.setVisible(visible);
+        }
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+
+        if (isHidden()) {
+            return;
+        }
+        getActivity().setTitle("Home");
+        // Toast.makeText(getActivity(), "123", Toast.LENGTH_SHORT).show();
+
+    }
+
 }

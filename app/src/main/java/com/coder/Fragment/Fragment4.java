@@ -1,15 +1,18 @@
 package com.coder.Fragment;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.coder.OnFragmentInteractionListener;
 import com.coder.pdfreader.R;
 
 
@@ -18,9 +21,18 @@ import com.coder.pdfreader.R;
  */
 public class Fragment4 extends Fragment {
 
+    private String TAG = "PDF";
+
 
     public Fragment4() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+
     }
 
     @Override
@@ -34,7 +46,7 @@ public class Fragment4 extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-
+        getActivity().setTitle("Downloaded Books");
         return inflater.inflate(R.layout.fragment4, container, false);
     }
 
@@ -88,8 +100,18 @@ public class Fragment4 extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         //inflater.inflate(R.menu.main, menu);
-       getActivity().setTitle("Downloaded Books");
+
         super.onCreateOptionsMenu(menu, inflater);
     }
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
 
+        if (isHidden()) {
+            return;
+        }
+        getActivity().setTitle("Downloaded Books");
+        // Toast.makeText(getActivity(), "123", Toast.LENGTH_SHORT).show();
+
+    }
 }
