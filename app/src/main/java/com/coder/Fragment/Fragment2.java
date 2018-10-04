@@ -5,16 +5,19 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.coder.OnFragmentInteractionListener;
+import com.coder.Data.data_f4;
+import com.coder.RecyclerViewAdapter.RecyclerView_f2_adapter;
 import com.coder.pdfreader.R;
+
+import java.util.ArrayList;
 
 
 /**
@@ -25,15 +28,27 @@ public class Fragment2 extends Fragment {
     private String TAG = "PDF";
     private View viewContent;
     private RecyclerView recyclerview;
+    private ArrayList<data_f4> list;
+    private RecyclerView_f2_adapter adapter;
 
     public Fragment2() {
-        // Required empty public constructor
+
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
+        initData();
+    }
+
+    private void initData() {
+
+        list = new ArrayList<>();
+
+        for (int i = 0; i < 10; i++) {
+            list.add(new data_f4());
+        }
 
     }
 
@@ -46,11 +61,16 @@ public class Fragment2 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         viewContent = inflater.inflate(R.layout.fragment2, null);
-        recyclerview = (RecyclerView) viewContent.findViewById(R.id.recyclerview);
         getActivity().setTitle("My Books");
 
+        recyclerview = (RecyclerView) viewContent.findViewById(R.id.recyclerview);
+        adapter = new RecyclerView_f2_adapter(getActivity(), list);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerview.setLayoutManager(layoutManager);
+        recyclerview.setAdapter(adapter);
 
         return viewContent;
     }

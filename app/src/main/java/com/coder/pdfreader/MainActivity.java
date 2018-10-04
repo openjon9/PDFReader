@@ -1,13 +1,14 @@
 package com.coder.pdfreader;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.SearchView;
-import android.util.Log;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -26,7 +27,6 @@ import com.coder.Fragment.Fragment2;
 import com.coder.Fragment.Fragment3;
 import com.coder.Fragment.Fragment4;
 import com.coder.Fragment.Fragment5;
-import com.coder.OnFragmentInteractionListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
         mContent = f1;
 
 
-
         if (savedInstanceState == null) {
             fragmentManager = getSupportFragmentManager();
             // fragmentManager.addOnBackStackChangedListener(this);
@@ -77,10 +76,41 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+        if (requestCode == 100) {
+            if (resultCode == RESULT_OK) {
+
+                try {
+                    Uri uri = data.getData();
+                    if (uri != null) {
+                        Intent intent = new Intent(context, PDFActivity.class);
+                        intent.putExtra("uri", uri.toString());
+                        startActivity(intent);
+                    }
+                } catch (Exception e) {
+
+                }
+
+            }
+        }
+
+
+    }
+
     private void initData() {
         list_f1 = new ArrayList<>();
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             list_f1.add(new data_f1());
 
         }
@@ -191,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
     private class MyClickListener implements View.OnClickListener {
 
         @Override
@@ -253,8 +284,20 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.linear6:
                     fragmentManager.beginTransaction().show(mContent).commit();
-
                     linear6.setBackgroundColor(getResources().getColor(R.color.gray));
+
+                    new AlertDialog.Builder(context)
+                            .setMessage("確定登出?")
+                            .setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    Intent intent = new Intent(context, LoginActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            })
+                            .setNegativeButton("取消", null)
+                            .show();
 
                     break;
             }

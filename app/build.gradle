@@ -36,7 +36,9 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:27.1.1'
     implementation 'com.android.support:cardview-v7:27.1.1'
 
-    compile 'com.github.barteksc:android-pdf-viewer:2.8.0'
+    compile 'com.github.barteksc:android-pdf-viewer:2.8.2'
+    //compile 'com.github.barteksc:android-pdf-viewer:3.1.0-beta.1'
 
 
+    implementation 'com.github.faruktoptas:FancyShowCaseView:1.0.1'
 }

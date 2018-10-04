@@ -1,18 +1,17 @@
 package com.coder.Fragment;
 
 
-import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,12 +21,12 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.coder.Data.data_f1;
-import com.coder.OnFragmentInteractionListener;
 import com.coder.RecyclerViewAdapter.RecyclerView_f1_adapter;
-import com.coder.pdfreader.MainActivity;
 import com.coder.pdfreader.R;
 
 import java.util.List;
+
+import me.toptas.fancyshowcase.FancyShowCaseView;
 
 
 /*************
@@ -45,7 +44,6 @@ import java.util.List;
  */
 public class Fragment1 extends Fragment {
 
-    private OnFragmentInteractionListener mListener;
 
     private RecyclerView recyclerview;
     private View viewContent;
@@ -55,6 +53,9 @@ public class Fragment1 extends Fragment {
 
     private String TAG = "PDF";
     private SearchView searchView;
+    private MenuItem searchItem;
+    private SwipeRefreshLayout layout_swipe_refresh;
+    private boolean isRefresh = false;
 
 
     public Fragment1() {
@@ -86,7 +87,9 @@ public class Fragment1 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        viewContent = inflater.inflate(R.layout.fragment1, null);
+        viewContent = inflater.inflate(R.layout.fragment1, container, false);
+
+        layout_swipe_refresh = (SwipeRefreshLayout) viewContent.findViewById(R.id.layout_swipe_refresh); //下拉刷新
         recyclerview = (RecyclerView) viewContent.findViewById(R.id.recyclerview);
 
         adapter = new RecyclerView_f1_adapter(getActivity(), mlist);
@@ -95,7 +98,34 @@ public class Fragment1 extends Fragment {
         recyclerview.setLayoutManager(layoutManager);
         recyclerview.setAdapter(adapter);
 
+        layout_swipe_refresh.setColorSchemeColors(Color.BLUE, Color.GREEN, Color.YELLOW, Color.RED); //下拉刷新顏色 最多設4種 只要刷新沒完成就一直循環
+        layout_swipe_refresh.setDistanceToTriggerSync(300); // 設置手指在螢幕下拉動多少距離會觸發下拉刷新
+        // layout_swipe_refresh.setProgressBackgroundColorSchemeColor(Color.BLACK); //下拉的圈圈背景色 預設是白
+        //  layout_swipe_refresh.setSize(SwipeRefreshLayout.LARGE); //設置圈圈大小 預設是小圈
+        layout_swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (!isRefresh) { //是否正在刷新中
+
+                    new Handler().postDelayed(new Runnable() {//模拟加载网络数据，这里设置4秒，正好能看到4色进度条
+                        @Override
+                        public void run() {
+
+                            isRefresh = true;
+                            mlist.add(new data_f1());
+
+                            adapter.notifyDataSetChanged();
+                            layout_swipe_refresh.setRefreshing(false); //更新完關閉刷新效果
+
+                        }
+                    }, 5000);
+                }
+
+            }
+        });
+
         //  Toast.makeText(getActivity(), "f1", Toast.LENGTH_SHORT).show();
+
 
         getActivity().setTitle("Home");
         return viewContent;
@@ -153,7 +183,7 @@ public class Fragment1 extends Fragment {
     @Override
     public void onCreateOptionsMenu(final Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main, menu);
-        final MenuItem searchItem = menu.findItem(R.id.Search);
+        searchItem = menu.findItem(R.id.Search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         //searchView.setSubmitButtonEnabled(true);//搜尋框右邊小箭頭 跟回車鍵一樣意思 占空間
 
@@ -200,6 +230,11 @@ public class Fragment1 extends Fragment {
                 return true;
             case R.id.Search:
 
+                new FancyShowCaseView.Builder(getActivity())
+                        .focusOn(getActivity().findViewById(R.id.toolbar))
+                        .fitSystemWindows(true)
+                        .build()
+                        .show();
                 // Toast.makeText(getActivity(), searchView.getMaxWidth()+"", Toast.LENGTH_SHORT).show();
                 //  Toast.makeText(getActivity(), "select", Toast.LENGTH_SHORT).show();
                 return true;
