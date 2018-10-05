@@ -1,6 +1,7 @@
 package com.coder.RecyclerViewAdapter;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,8 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.coder.Data.data_f3;
-import com.coder.Data.data_f4;
 import com.coder.pdfreader.R;
+import com.coder.pdfreader.YouTubeActivity;
 
 import java.util.List;
 
@@ -46,6 +47,10 @@ public class RecyclerView_f3_adapter extends RecyclerView.Adapter<RecyclerView_f
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                Intent intent = new Intent(context, YouTubeActivity.class);
+
+                context.startActivity(intent);
 
             }
         });

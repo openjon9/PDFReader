@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -29,8 +30,13 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".MainActivity" />
         <activity android:name=".PDFActivity" />
-        <activity android:name=".LoginActivity"
-            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
+        <activity
+            android:name=".LoginActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity android:name=".YouTubeActivity" />
+        <activity
+            android:name=".VideoActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"></activity>
     </application>
 
 </manifest>

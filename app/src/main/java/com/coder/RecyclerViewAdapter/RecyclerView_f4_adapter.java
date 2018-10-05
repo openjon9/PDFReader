@@ -1,6 +1,7 @@
 package com.coder.RecyclerViewAdapter;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import com.coder.Data.data_f1;
 import com.coder.Data.data_f4;
 import com.coder.pdfreader.R;
+import com.coder.pdfreader.VideoActivity;
 
 import java.util.List;
 
@@ -48,9 +50,17 @@ public class RecyclerView_f4_adapter extends RecyclerView.Adapter<RecyclerView_f
             @Override
             public void onClick(View view) {
 
+
+               // Intent intent = new Intent(context, VideoActivity.class);
+               // intent.putExtra("uri", uri.toString());
+              //  context.startActivity(intent);
+
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("*/*");
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                context.startActivityForResult(intent, 400);
             }
         });
-
     }
 
     @Override

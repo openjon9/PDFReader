@@ -86,24 +86,47 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        if (resultCode == RESULT_OK) {
 
-        if (requestCode == 100) {
-            if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case 100:
+                    try {
+                        Uri uri = data.getData();
+                        if (uri != null) {
+                            Intent intent = new Intent(context, PDFActivity.class);
+                            intent.putExtra("uri", uri.toString());
+                            startActivity(intent);
+                        }
+                    } catch (Exception e) {
 
-                try {
-                    Uri uri = data.getData();
-                    if (uri != null) {
-                        Intent intent = new Intent(context, PDFActivity.class);
-                        intent.putExtra("uri", uri.toString());
-                        startActivity(intent);
                     }
-                } catch (Exception e) {
+                    break;
+                case 200:
 
-                }
+                    break;
+                case 300:
+
+                    break;
+                case 400:
+                    try {
+                        Uri uri = data.getData();
+                        if (uri != null) {
+                            Intent intent = new Intent(context, VideoActivity.class);
+                            intent.putExtra("uri", uri.toString());
+                            startActivity(intent);
+                        }
+                    } catch (Exception e) {
+
+                    }
+                    break;
+                case 500:
+
+                    break;
+
 
             }
-        }
 
+        }
 
     }
 
