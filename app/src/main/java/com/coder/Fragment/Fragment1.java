@@ -255,7 +255,9 @@ public class Fragment1 extends Fragment {
         @Override
         public boolean onQueryTextChange(String newText) { //剛開啟跟每次文字改變時回應
 
-            //  Toast.makeText(getActivity(), "newText:" + newText, Toast.LENGTH_SHORT).show();
+            adapter.getFilter().filter(newText);
+
+
             return false;
         }
     }
@@ -276,6 +278,12 @@ public class Fragment1 extends Fragment {
         }
         getActivity().setTitle("Home");
         // Toast.makeText(getActivity(), "123", Toast.LENGTH_SHORT).show();
+
+    }
+
+    public void updata() {
+
+        adapter.notifyDataSetChanged();
 
     }
 

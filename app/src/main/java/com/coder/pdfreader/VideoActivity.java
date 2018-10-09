@@ -21,6 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.coder.Data.videoData;
+
 import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -42,10 +44,11 @@ public class VideoActivity extends AppCompatActivity implements View.OnTouchList
     private LinearLayout linear;
     private boolean isHide = false;
 
-    private int position = 0;
+    private int position;
     private Timer timer;
     private MySeekBarTask task;
     private SeekBar seekBar;
+    private videoData data;
 
 
     @Override
@@ -55,6 +58,7 @@ public class VideoActivity extends AppCompatActivity implements View.OnTouchList
         context = this;
 
         findview();
+        data = new videoData(); //強引用 防止橫豎屏數據流失
 
         uri = Uri.parse(getIntent().getStringExtra("uri"));
         // str = getIntent().getStringExtra("uri");
@@ -63,16 +67,18 @@ public class VideoActivity extends AppCompatActivity implements View.OnTouchList
 
         if (savedInstanceState != null) {
 
-            Toast.makeText(context, "123456", Toast.LENGTH_SHORT).show();
+            //  Toast.makeText(context, "123456", Toast.LENGTH_SHORT).show();
+            position = savedInstanceState.getInt("currentposition");
             video.seekTo(position);
             seekBar.setProgress(position);
         }
+
 
         setVideo();
 
         initEvent();
 
-
+        // Toast.makeText(context, "666", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -80,19 +86,30 @@ public class VideoActivity extends AppCompatActivity implements View.OnTouchList
         super.onPause();
 
         position = video.getCurrentPosition();
+        data.setPosition(position);
         //outState.putInt("currentposition", position);
         video.pause();
 
+        //  Toast.makeText(context, "position:" + position, Toast.LENGTH_SHORT).show();
+
+    }
+
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        position = data.getPosition();
+
+        video.seekTo(position);
+        seekBar.setProgress(position);
+        // Toast.makeText(context, "position:" + position, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        video.seekTo(position);
-        seekBar.setProgress(position);
-
-
+        
     }
 
     @Override
@@ -120,7 +137,6 @@ public class VideoActivity extends AppCompatActivity implements View.OnTouchList
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
 
         if (video != null) {
             video.suspend(); //釋放資源
@@ -179,7 +195,7 @@ public class VideoActivity extends AppCompatActivity implements View.OnTouchList
 
                 if (position == 0) {
                     video.start();
-
+                   // Toast.makeText(context, "777", Toast.LENGTH_SHORT).show();
                     timer = new Timer();
                     task = new MySeekBarTask();
                     timer.schedule(task, 0, 1000);

@@ -29,6 +29,7 @@ dependencies {
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
@@ -42,5 +43,21 @@ dependencies {
 
     implementation 'com.github.faruktoptas:FancyShowCaseView:1.0.1'
 
+    //動畫進度條
+    compile 'com.github.Ajian-studio:GADownloading:v1.0.2'
+
+    //圖片加載
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
+    //有很多強大功能 這邊只用到檔案下載
+    compile 'org.xutils:xutils:3.5.0'
+    compile 'org.kymjs.kjframe:kjframe:2.6'
+
     compile files('libs/YouTubeAndroidPlayerApi.jar')
+
+    //noinspection GradleCompatible
+    implementation 'com.google.firebase:firebase-core:16.0.1'
+    //noinspection GradleCompatible
+    implementation 'com.google.firebase:firebase-database:15.0.1'
 }
+apply plugin: 'com.google.gms.google-services'

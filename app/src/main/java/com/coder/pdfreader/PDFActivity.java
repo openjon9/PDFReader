@@ -14,10 +14,15 @@ import com.github.barteksc.pdfviewer.listener.OnPageErrorListener;
 import com.github.barteksc.pdfviewer.listener.OnPageScrollListener;
 import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
 
+import java.io.File;
+
 public class PDFActivity extends AppCompatActivity {
 
     private PDFView pdfView;
     private Uri uri;
+    private String TAG = "coderPDF";
+    private String filePath;
+    private File file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,8 +31,12 @@ public class PDFActivity extends AppCompatActivity {
 
 
         findview();
+        filePath = getIntent().getStringExtra("uri");
+       // uri = Uri.parse(filePath);
 
-        uri = Uri.parse(getIntent().getStringExtra("uri"));
+        file = new File(filePath);
+
+       // Log.d(TAG, "uri:" + uri);
 
         setPDF();
 
@@ -35,7 +44,7 @@ public class PDFActivity extends AppCompatActivity {
 
     private void setPDF() {
 
-        pdfView.fromUri(uri)
+        pdfView.fromFile(file)
                 .swipeHorizontal(true)
                 .enableSwipe(true)
                 .defaultPage(0)

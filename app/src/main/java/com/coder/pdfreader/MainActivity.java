@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -27,6 +28,11 @@ import com.coder.Fragment.Fragment2;
 import com.coder.Fragment.Fragment3;
 import com.coder.Fragment.Fragment4;
 import com.coder.Fragment.Fragment5;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -49,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
     List<data_f1> list_f1;
     private FragmentManager fragmentManager;
     private String TAG = "coderPDF";
+    private int position;
+    private Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         initEvent();
 
         f1 = new Fragment1();
-        Bundle bundle = new Bundle();
+        bundle = new Bundle();
         bundle.putSerializable("list", (Serializable) list_f1);
         f1.setArguments(bundle);
         mContent = f1;
@@ -133,10 +141,46 @@ public class MainActivity extends AppCompatActivity {
     private void initData() {
         list_f1 = new ArrayList<>();
 
-        for (int i = 0; i < 10; i++) {
-            list_f1.add(new data_f1());
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("message");
 
-        }
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                list_f1.clear();
+
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+
+                    String imgName = ds.child("img").getValue().toString();
+                    String imgPath = ds.child("uri").getValue().toString();
+                    String mp4 = "";
+
+                    try {
+                         mp4 = ds.child("mp4").getValue().toString();
+                    } catch (Exception e) {
+
+                    }
+
+                    list_f1.add(new data_f1(imgName, imgPath, mp4));
+
+                    Log.d(TAG, "mp4:" + mp4);
+                }
+                f1.updata();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+//
+//        for (int i = 0; i < 10; i++) {
+//            list_f1.add(new data_f1());
+//
+//        }
 
     }
 

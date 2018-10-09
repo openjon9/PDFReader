@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.coder.Data.data_f1;
 import com.coder.Data.data_f4;
+import com.coder.pdfreader.PDFActivity;
 import com.coder.pdfreader.R;
 import com.coder.pdfreader.VideoActivity;
 
@@ -21,16 +23,17 @@ import java.util.List;
  * Created by Rey on 2018/10/4.
  */
 
-public class RecyclerView_f4_adapter extends RecyclerView.Adapter<RecyclerView_f4_adapter.ViewHolder>{
+public class RecyclerView_f4_adapter extends RecyclerView.Adapter<RecyclerView_f4_adapter.ViewHolder> {
 
     private Activity context;
     private List<data_f4> mData;
+    private String TAG = "coderPDF";
+    private String filePath;
 
     public RecyclerView_f4_adapter(Activity context, List<data_f4> mData) {
         this.context = context;
         this.mData = mData;
     }
-
 
 
     @NonNull
@@ -43,22 +46,38 @@ public class RecyclerView_f4_adapter extends RecyclerView.Adapter<RecyclerView_f
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+
+
+        holder.title.setText(mData.get(position).getName());
 
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                filePath = mData.get(position).getMp4();
+                Log.d(TAG, "路徑:" + filePath);
 
 
-               // Intent intent = new Intent(context, VideoActivity.class);
-               // intent.putExtra("uri", uri.toString());
-              //  context.startActivity(intent);
+                if (filePath.contains(".mp4")) {
+                    Intent intent = new Intent(context, VideoActivity.class);
+                    intent.putExtra("uri", mData.get(position).getMp4());
+                    context.startActivity(intent);
+                } else if (filePath.contains(".pdf")) {
+                    Intent intent = new Intent(context, PDFActivity.class);
+                    intent.putExtra("uri", mData.get(position).getMp4());
+                    context.startActivity(intent);
+                }
 
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("*/*");
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                context.startActivityForResult(intent, 400);
+
+                // Intent intent = new Intent(context, VideoActivity.class);
+                // intent.putExtra("uri", uri.toString());
+                //  context.startActivity(intent);
+
+//                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);  //直接選檔案
+//                intent.setType("*/*");
+//                intent.addCategory(Intent.CATEGORY_OPENABLE);
+//                context.startActivityForResult(intent, 400);
             }
         });
     }
@@ -68,14 +87,15 @@ public class RecyclerView_f4_adapter extends RecyclerView.Adapter<RecyclerView_f
         return mData.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView img;
-        TextView text;
+        TextView title;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
+            title = (TextView) itemView.findViewById(R.id.title);
 
 
         }

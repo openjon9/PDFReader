@@ -3,10 +3,12 @@ package com.coder.Fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +21,8 @@ import com.coder.Data.data_f4;
 import com.coder.RecyclerViewAdapter.RecyclerView_f4_adapter;
 import com.coder.pdfreader.R;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 
 
@@ -27,7 +31,7 @@ import java.util.ArrayList;
  */
 public class Fragment4 extends Fragment {
 
-    private String TAG = "PDF";
+    private String TAG = "coderPDF";
     private View viewContent;
     private RecyclerView recyclerview;
     private RecyclerView_f4_adapter adapter;
@@ -47,10 +51,58 @@ public class Fragment4 extends Fragment {
     }
 
     private void initData() {
+
+        final File filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+
+        File file = new File(filePath.getPath() + "/PDFReader");
+
+//        FilenameFilter filter = new FilenameFilter() {
+//
+//            private String[] filter = {".mp4", ".PDF"};
+//
+//            @Override
+//            public boolean accept(File dir, String filename) {
+//
+//                for (int i = 0; i < filePath.length(); i++) {
+//                    if (filename.indexOf(filter[i]) != -1) {
+//                        return true;
+//                    }
+//                }
+//                return false;
+//            }
+//        };
         list = new ArrayList<>();
 
-        for (int i = 0; i < 10; i++) {
-            list.add(new data_f4());
+        if (file.mkdirs()) {
+            File[] fList = file.listFiles();
+
+            for (File item : fList) {
+
+                //Log.d(TAG, "檔案數量:" + file.length());
+                if (item.isFile()) {
+                    Log.d(TAG, "檔案內容:" + item);
+                } else if (item.isDirectory()) {
+                    Log.d(TAG, "Directory:" + item);
+                }
+            }
+        } else {
+            File[] fList = file.listFiles();
+
+            for (File item : fList) {
+
+                if (item.isFile()) {
+                    String[] str1 = item.getAbsolutePath().split("PDFReader/");
+                    String[] str2 = str1[1].split("\\.");
+                    data_f4 d4 = new data_f4();
+                    d4.setName(str2[0]);
+                    d4.setMp4(item.getAbsolutePath());
+                    list.add(d4);
+
+                    Log.d(TAG, "檔案內容:" + item.getAbsolutePath());
+                } else if (item.isDirectory()) {
+                    Log.d(TAG, "Directory:" + item.getAbsolutePath());
+                }
+            }
         }
 
     }
