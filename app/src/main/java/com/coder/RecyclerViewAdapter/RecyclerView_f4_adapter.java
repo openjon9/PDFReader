@@ -16,6 +16,7 @@ import com.coder.Data.data_f4;
 import com.coder.pdfreader.PDFActivity;
 import com.coder.pdfreader.R;
 import com.coder.pdfreader.VideoActivity;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -51,33 +52,19 @@ public class RecyclerView_f4_adapter extends RecyclerView.Adapter<RecyclerView_f
 
         holder.title.setText(mData.get(position).getName());
 
+        Picasso.with(context)
+                .load("file://" + mData.get(position).getImgPath())
+                .placeholder(R.drawable.preset_img) //圖片下載完成前的預設本地圖片
+                .error(R.drawable.preset_img) //加載失敗顯示的預設圖
+                //.resize(480, 200) //服务端可能给我们一些奇怪的尺寸的图片，我们可以使用resize(int w,int hei) 来重新设置尺寸。
+                .fit()
+                .centerCrop()
+                .into(holder.img);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                filePath = mData.get(position).getMp4();
-                Log.d(TAG, "路徑:" + filePath);
 
-
-                if (filePath.contains(".mp4")) {
-                    Intent intent = new Intent(context, VideoActivity.class);
-                    intent.putExtra("uri", mData.get(position).getMp4());
-                    context.startActivity(intent);
-                } else if (filePath.contains(".pdf")) {
-                    Intent intent = new Intent(context, PDFActivity.class);
-                    intent.putExtra("uri", mData.get(position).getMp4());
-                    context.startActivity(intent);
-                }
-
-
-                // Intent intent = new Intent(context, VideoActivity.class);
-                // intent.putExtra("uri", uri.toString());
-                //  context.startActivity(intent);
-
-//                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);  //直接選檔案
-//                intent.setType("*/*");
-//                intent.addCategory(Intent.CATEGORY_OPENABLE);
-//                context.startActivityForResult(intent, 400);
             }
         });
     }
@@ -96,7 +83,7 @@ public class RecyclerView_f4_adapter extends RecyclerView.Adapter<RecyclerView_f
             super(itemView);
 
             title = (TextView) itemView.findViewById(R.id.title);
-
+            img = (ImageView) itemView.findViewById(R.id.img);
 
         }
     }

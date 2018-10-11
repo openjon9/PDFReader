@@ -78,7 +78,7 @@ public class RecyclerView_f1_adapter extends RecyclerView.Adapter<RecyclerView_f
                 .resize(480, 200) //服务端可能给我们一些奇怪的尺寸的图片，我们可以使用resize(int w,int hei) 来重新设置尺寸。
                 .into(holder.img);
 
-        Picasso.with(context).setIndicatorsEnabled(true); //緩存指示器   圖片的左上角出現一個帶色塊的三角形標示 綠色表示從內存加載、藍色表示從磁盤加載、紅色表示從網絡加載
+      //  Picasso.with(context).setIndicatorsEnabled(true); //緩存指示器   圖片的左上角出現一個帶色塊的三角形標示 綠色表示從內存加載、藍色表示從磁盤加載、紅色表示從網絡加載
 
     }
 

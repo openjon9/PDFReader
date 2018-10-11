@@ -65,13 +65,12 @@ public class MainActivity extends AppCompatActivity {
         context = this;
 
         findview();
-        initData();
         initEvent();
 
         f1 = new Fragment1();
-        bundle = new Bundle();
-        bundle.putSerializable("list", (Serializable) list_f1);
-        f1.setArguments(bundle);
+//        bundle = new Bundle();  fragment 資料傳遞方式
+//        bundle.putSerializable("list", (Serializable) list_f1);
+//        f1.setArguments(bundle);
         mContent = f1;
 
 
@@ -138,51 +137,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void initData() {
-        list_f1 = new ArrayList<>();
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("message");
-
-
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                list_f1.clear();
-
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-
-                    String imgName = ds.child("img").getValue().toString();
-                    String imgPath = ds.child("uri").getValue().toString();
-                    String mp4 = "";
-
-                    try {
-                         mp4 = ds.child("mp4").getValue().toString();
-                    } catch (Exception e) {
-
-                    }
-
-                    list_f1.add(new data_f1(imgName, imgPath, mp4));
-
-                    Log.d(TAG, "mp4:" + mp4);
-                }
-                f1.updata();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-//
-//        for (int i = 0; i < 10; i++) {
-//            list_f1.add(new data_f1());
-//
-//        }
-
-    }
 
     private void initEvent() {
         setSupportActionBar(toolbar);
@@ -310,8 +264,9 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.linear2:
                     if (f2 == null) {
                         f2 = new Fragment2();
-
                     }
+                    f2.updata();
+
                     switchContent(mContent, f2, "tag2");
                     fragmentManager.beginTransaction().show(f2).commit();
 
@@ -332,6 +287,8 @@ public class MainActivity extends AppCompatActivity {
                     if (f4 == null) {
                         f4 = new Fragment4();
                     }
+                    f4.updata();
+
                     switchContent(mContent, f4, "tag4");
                     fragmentManager.beginTransaction().show(f4).commit();
 

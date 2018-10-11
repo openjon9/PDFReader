@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 
+import com.coder.Data.data_f2;
 import com.coder.Data.data_f4;
 import com.coder.RecyclerViewAdapter.RecyclerView_f4_adapter;
 import com.coder.pdfreader.R;
@@ -46,65 +47,54 @@ public class Fragment4 extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 
+        list = new ArrayList<>();
         initData();
 
     }
 
     private void initData() {
 
-        final File filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
 
-        File file = new File(filePath.getPath() + "/PDFReader");
+        final File filePath = Environment.getExternalStorageDirectory();
 
-//        FilenameFilter filter = new FilenameFilter() {
-//
-//            private String[] filter = {".mp4", ".PDF"};
-//
-//            @Override
-//            public boolean accept(File dir, String filename) {
-//
-//                for (int i = 0; i < filePath.length(); i++) {
-//                    if (filename.indexOf(filter[i]) != -1) {
-//                        return true;
-//                    }
-//                }
-//                return false;
-//            }
-//        };
-        list = new ArrayList<>();
+        File file = new File(filePath.getPath() + "/PDFReader/PDFReaderFile");
+        File file_pic = new File(filePath.getPath() + "/PDFReader/PDFReaderPic");
 
-        if (file.mkdirs()) {
-            File[] fList = file.listFiles();
+        File[] arr1 = file.listFiles();
+        File[] arr2 = file_pic.listFiles();
 
-            for (File item : fList) {
-
-                //Log.d(TAG, "檔案數量:" + file.length());
-                if (item.isFile()) {
-                    Log.d(TAG, "檔案內容:" + item);
-                } else if (item.isDirectory()) {
-                    Log.d(TAG, "Directory:" + item);
-                }
-            }
-        } else {
-            File[] fList = file.listFiles();
-
-            for (File item : fList) {
-
-                if (item.isFile()) {
-                    String[] str1 = item.getAbsolutePath().split("PDFReader/");
-                    String[] str2 = str1[1].split("\\.");
-                    data_f4 d4 = new data_f4();
-                    d4.setName(str2[0]);
-                    d4.setMp4(item.getAbsolutePath());
-                    list.add(d4);
-
-                    Log.d(TAG, "檔案內容:" + item.getAbsolutePath());
-                } else if (item.isDirectory()) {
-                    Log.d(TAG, "Directory:" + item.getAbsolutePath());
-                }
-            }
+        if (!file.exists()) {
+            file.mkdirs();
         }
 
+        if (!file_pic.exists()) {
+            file_pic.mkdirs();
+        }
+
+        if (arr1 == null || arr1.length < 1) {
+            return;
+        }
+
+        for (int i = 0; i < arr1.length; i++) {
+            data_f4 d4 = new data_f4();
+
+            String str1 = arr1[i].getAbsolutePath().split("PDFReader/PDFReaderFile/")[1].split("\\.")[0];
+            d4.setName(str1);
+            d4.setMp4(arr1[i].getAbsolutePath());
+
+            String str2 = "";
+
+            for (File item2 : arr2) {
+                str2 = item2.getAbsolutePath().split("PDFReader/PDFReaderPic/")[1].split("\\.")[0];
+                if (str1.equals(str2)) {
+                    d4.setImgPath(item2.getAbsolutePath());
+                    Log.d(TAG, "圖片路徑:" + item2.getAbsolutePath());
+                }
+            }
+
+            list.add(d4);
+            Log.d(TAG, "檔案內容:" + str1);
+        }
     }
 
     @Override
@@ -198,4 +188,13 @@ public class Fragment4 extends Fragment {
         // Toast.makeText(getActivity(), "123", Toast.LENGTH_SHORT).show();
 
     }
+
+    public void updata() {
+        if (adapter != null) {
+            list.clear();
+            initData();
+            adapter.notifyDataSetChanged();
+        }
+    }
+
 }
