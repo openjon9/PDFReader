@@ -48,9 +48,8 @@ public class RecyclerView_f3_adapter extends RecyclerView.Adapter<RecyclerView_f
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(context, YouTubeActivity.class);
-
-                context.startActivity(intent);
+              //  Intent intent = new Intent(context, YouTubeActivity.class);
+               // context.startActivity(intent);
 
             }
         });

@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
     <application
         android:name="com.coder.MyApp"
         android:allowBackup="true"
@@ -41,6 +42,11 @@
         <activity
             android:name=".VideoActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"></activity>
+
+        <service
+            android:name="com.coder.Srevice.downloadService"
+            android:exported="false" />
+
     </application>
 
 </manifest>

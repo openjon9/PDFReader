@@ -2,6 +2,10 @@ package com.coder.pdfreader;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -26,6 +30,7 @@ import android.widget.Toast;
 import com.coder.FileUtil;
 import com.coder.Fragment.Fragment2;
 import com.coder.Fragment.Fragment4;
+import com.coder.Srevice.downloadService;
 import com.gastudio.downloadloadding.library.GADownloadingView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -65,6 +70,8 @@ public class ScrollingActivity extends AppCompatActivity {
     private GADownloadingView ga_downloading;
     private boolean isdownLoad = false;
     private HttpURLConnection conn;
+    private downloadBroadcaseReceiver receiver;
+    private String str;
 
 
     @Override
@@ -80,6 +87,10 @@ public class ScrollingActivity extends AppCompatActivity {
         // httpconfig.cacheTime = 0;
         kjhttp = new KJHttp(httpconfig);
         // x.view().inject(context); //xUtils3注解模块的使用
+
+
+        receiver = new downloadBroadcaseReceiver();
+        registerReceiver(receiver, new IntentFilter("download"));
 
         findView();
 
@@ -100,8 +111,28 @@ public class ScrollingActivity extends AppCompatActivity {
 
         }
 
-        if (!mp4.equals("")) {
+        Log.d(TAG, "mp4:" + mp4);
 
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(context, YouTubeActivity.class);
+                startActivity(intent);
+
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (!mp4.equals("")) {
             download.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -115,39 +146,44 @@ public class ScrollingActivity extends AppCompatActivity {
                             savePath_mp4 = Environment.getExternalStorageDirectory() + "/PDFReader/PDFReaderFile/" + name + ".mp4";
 
                         } else if (mp4.contains("PDF")) {
-                            savePath_mp4 = Environment.getExternalStorageDirectory()  + "/PDFReader/PDFReaderFile/" + name + ".pdf";
+                            savePath_mp4 = Environment.getExternalStorageDirectory() + "/PDFReader/PDFReaderFile/" + name + ".pdf";
 
                         } else {
                             isdownLoad = false;
                             return;
                         }
 
+                        Intent intent = new Intent(context, downloadService.class);
+                        intent.putExtra("savePath_mp4", savePath_mp4);
+                        intent.putExtra("imgPath", imgPath);
+                        intent.putExtra("mp4", mp4);
+                        intent.putExtra("name", name);
+                        startService(intent);
 
-                     //   downloadFile(savePath_mp4);
+                        //   downloadFile(savePath_mp4);
                         //下載
-                        downloadPic(savePath_mp4,imgPath);
+                        // downloadPic(savePath_mp4, imgPath);
 
                     }
                 }
             });
         }
 
-        Log.d(TAG, "mp4:" + mp4);
 
+    }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (receiver != null) {
+            unregisterReceiver(receiver);
+            receiver = null;
+        }
+
     }
 
     private void downloadPic(final String savePath_mp4, final String imgPath) {
-
-
 
         //Target
         Target target = new Target() {
@@ -170,7 +206,7 @@ public class ScrollingActivity extends AppCompatActivity {
 
                 //下載文件
                 downloadFile(savePath_mp4);
-              //  Toast.makeText(ScrollingActivity.this, "圖片下載完成", Toast.LENGTH_SHORT).show();
+                //  Toast.makeText(ScrollingActivity.this, "圖片下載完成", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -252,6 +288,48 @@ public class ScrollingActivity extends AppCompatActivity {
         download = (TextView) findViewById(R.id.download);
 
         ga_downloading = (GADownloadingView) findViewById(R.id.ga_downloading);
+
+    }
+
+    private class downloadBroadcaseReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            str = intent.getStringExtra("download");
+
+            Log.d(TAG, "str:" + str);
+
+            switch (str) {
+                case "開始下載":
+                   // Log.d(TAG, "開始下載中2");
+                    ga_downloading.performAnimation();
+
+                    break;
+                case "下載完成":
+                    Toast.makeText(context, "下載完成", Toast.LENGTH_SHORT).show();
+                    ga_downloading.setVisibility(View.GONE);
+                    isdownLoad = false;
+
+                    break;
+
+                case "錯誤":
+                    ga_downloading.onFail();
+                    ga_downloading.setVisibility(View.GONE);
+                    isdownLoad = false;
+
+                    break;
+                default:
+                    break;
+            }
+
+            pro = intent.getFloatExtra("pro", -1);
+            //  Log.d(TAG, "pro:" + pro);
+            ga_downloading.updateProgress((int) pro);
+
+//            if (intent.getIntExtra("pro", -1) != -1) {
+//
+//            }
+        }
 
     }
 
