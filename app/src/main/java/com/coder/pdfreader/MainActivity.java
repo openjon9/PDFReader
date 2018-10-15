@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ServiceUtils;
 import com.coder.Data.data_f1;
 import com.coder.Fragment.Fragment1;
 import com.coder.Fragment.Fragment2;
@@ -80,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
             fragmentManager.beginTransaction().add(R.id.container, f1, "tag1").commit();
             linear1.setBackgroundColor(getResources().getColor(R.color.gray));
         }
+
+
 
     }
 

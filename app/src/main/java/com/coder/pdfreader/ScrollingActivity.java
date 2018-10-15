@@ -1,6 +1,7 @@
 package com.coder.pdfreader;
 
 import android.annotation.SuppressLint;
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -27,6 +28,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ServiceUtils;
 import com.coder.FileUtil;
 import com.coder.Fragment.Fragment2;
 import com.coder.Fragment.Fragment4;
@@ -71,7 +73,8 @@ public class ScrollingActivity extends AppCompatActivity {
     private boolean isdownLoad = false;
     private HttpURLConnection conn;
     private downloadBroadcaseReceiver receiver;
-    private String str;
+    private int str;
+    private Intent downIntent;
 
 
     @Override
@@ -131,46 +134,52 @@ public class ScrollingActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (!ServiceUtils.isServiceRunning(context, "com.coder.Srevice.downloadService")) {
 
-        if (!mp4.equals("")) {
-            download.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+            if (!mp4.equals("")) {
+                download.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
 
-                    if (!isdownLoad) {
-                        isdownLoad = true;
+                        if (!isdownLoad) {
+                            isdownLoad = true;
 
-                        String savePath_mp4 = "";
+                            String savePath_mp4 = "";
 
-                        if (mp4.contains("mp4")) {
-                            savePath_mp4 = Environment.getExternalStorageDirectory() + "/PDFReader/PDFReaderFile/" + name + ".mp4";
+                            if (mp4.contains("mp4")) {
+                                savePath_mp4 = Environment.getExternalStorageDirectory() + "/PDFReader/PDFReaderFile/" + name + ".mp4";
 
-                        } else if (mp4.contains("PDF")) {
-                            savePath_mp4 = Environment.getExternalStorageDirectory() + "/PDFReader/PDFReaderFile/" + name + ".pdf";
+                            } else if (mp4.contains("PDF")) {
+                                savePath_mp4 = Environment.getExternalStorageDirectory() + "/PDFReader/PDFReaderFile/" + name + ".pdf";
 
-                        } else {
-                            isdownLoad = false;
-                            return;
+                            } else {
+                                isdownLoad = false;
+                                return;
+                            }
+
+
+                            downIntent = new Intent(context, downloadService.class);
+                            downIntent.putExtra("savePath_mp4", savePath_mp4);
+                            downIntent.putExtra("imgPath", imgPath);
+                            downIntent.putExtra("mp4", mp4);
+                            downIntent.putExtra("name", name);
+                            startService(downIntent);
+
+
+                            //   downloadFile(savePath_mp4);
+                            //下載
+                            // downloadPic(savePath_mp4, imgPath);
+
                         }
-
-                        Intent intent = new Intent(context, downloadService.class);
-                        intent.putExtra("savePath_mp4", savePath_mp4);
-                        intent.putExtra("imgPath", imgPath);
-                        intent.putExtra("mp4", mp4);
-                        intent.putExtra("name", name);
-                        startService(intent);
-
-                        //   downloadFile(savePath_mp4);
-                        //下載
-                        // downloadPic(savePath_mp4, imgPath);
-
                     }
-                }
-            });
+                });
+            }
+        }else {
+            Log.d(TAG,"999");
         }
 
-
     }
+
 
     @Override
     protected void onDestroy() {
@@ -295,40 +304,49 @@ public class ScrollingActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            str = intent.getStringExtra("download");
+//            str = intent.getIntExtra("download", -1);
+//
+//            switch (str) {
+//                case 10001:
+//                    // Log.d(TAG, "開始下載中2");
+//                    ga_downloading.performAnimation();
+//                    break;
+//                case 10002:
+//                    Toast.makeText(context, "下載完成", Toast.LENGTH_SHORT).show();
+//                    ga_downloading.setVisibility(View.GONE);
+//                    isdownLoad = false;
+//
+//                    break;
+//                case 10003:
+//                    ga_downloading.onFail();
+//                    ga_downloading.setVisibility(View.GONE);
+//                    isdownLoad = false;
+//
+//                    break;
+//                default:
+//                    float pp = intent.getFloatExtra("download", 0);
+//                    Log.d(TAG, "pp:" + pp);
+//                    ga_downloading.updateProgress((int) pp);
+//                    break;
+//            }
 
-            Log.d(TAG, "str:" + str);
+            int pp = intent.getIntExtra("progress", 0);
+            ga_downloading.updateProgress(pp);
 
-            switch (str) {
-                case "開始下載":
-                   // Log.d(TAG, "開始下載中2");
-                    ga_downloading.performAnimation();
-
-                    break;
-                case "下載完成":
-                    Toast.makeText(context, "下載完成", Toast.LENGTH_SHORT).show();
-                    ga_downloading.setVisibility(View.GONE);
-                    isdownLoad = false;
-
-                    break;
-
-                case "錯誤":
-                    ga_downloading.onFail();
-                    ga_downloading.setVisibility(View.GONE);
-                    isdownLoad = false;
-
-                    break;
-                default:
-                    break;
+            if (pp == 0) {
+                ga_downloading.performAnimation();
             }
 
-            pro = intent.getFloatExtra("pro", -1);
-            //  Log.d(TAG, "pro:" + pro);
-            ga_downloading.updateProgress((int) pro);
+            if (pp == 100) {
+                ga_downloading.setVisibility(View.GONE);
+                isdownLoad = false;
+                Toast.makeText(context, "下載完成", Toast.LENGTH_SHORT).show();
 
-//            if (intent.getIntExtra("pro", -1) != -1) {
-//
-//            }
+                //  stopService(downIntent);
+
+            }
+
+
         }
 
     }
